@@ -119,7 +119,7 @@ pipeline {
       steps {
         sh '''
           docker compose up -d
-          URL=http://localhost:${WEB_PORT}
+          URL=http://host.docker.internal:${WEB_PORT}
           API=$URL/api
           BODY='{"title":"ci-smoke-test"}'
           curl -f --retry 20 --retry-delay 3 --retry-connrefused $API/health
