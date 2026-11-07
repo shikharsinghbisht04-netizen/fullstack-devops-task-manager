@@ -131,14 +131,17 @@ pipeline {
     }
 
     stage('Security Scan') {
-      steps {
-        sh '''
-          for IMG in ${BACKEND} ${FRONTEND}; do
-            trivy image --severity CRITICAL --exit-code 1 $IMG:${IMAGE_TAG}
-          done
-        '''
-      }
-    }
+  steps {
+    sh '''
+      for IMG in ${BACKEND} ${FRONTEND}; do
+        docker run --rm \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          aquasec/trivy:latest \
+          image --severity CRITICAL --exit-code 1 $IMG:${IMAGE_TAG}
+      done
+    '''
+  }
+}
 
     stage('Publish Images') {
       when { anyOf { branch 'develop'; branch 'main' } }
